@@ -101,45 +101,58 @@ print("\nSorted by Price:")
 print(chocolates)
 
 class Chocolate:
-    def __init__(self, weight, price):
+    def __init__(self, weight, price, type_chocolate, id_chocolate):
         self.weight = weight
         self.price = price
+        self.type = type_chocolate
+        self.id = id_chocolate
 
     def __repr__(self):
-        return f"Chocolate(weight={self.weight}, price={self.price})"
+        return (f"Chocolate(weight={self.weight} gm, price={self.price} AED, "
+                f"type={self.type}, id={self.id})")
 
-def find_chocolate_by_attribute(chocolates, attribute, value):
-    low = 0
-    high = len(chocolates) - 1
+class Student:
+    def __init__(self, name):
+        self.name = name
+        self.chocolate = None
 
-    while low <= high:
-        mid = (low + high) // 2
-        if getattr(chocolates[mid], attribute) == value:
-            return mid  # Chocolate found
-        elif getattr(chocolates[mid], attribute) < value:
-            low = mid + 1
+    def __repr__(self):
+        return f"Student(name={self.name}, chocolate={self.chocolate})"
+
+def find_student_with_chocolate(students, target, by_weight=True):
+    left, right = 0, len(students) - 1
+    while left <= right:
+        mid = (left + right) // 2
+        chocolate_attr = students[mid].chocolate.weight if by_weight else students[mid].chocolate.price
+        if chocolate_attr == target:
+            return mid
+        elif chocolate_attr < target:
+            left = mid + 1
         else:
-            high = mid - 1
+            right = mid - 1
+    return -1  # Target not found
 
-    return -1  # Chocolate not found
+# Creating students with real names and assigning chocolates
+students_with_chocolates = [
+    Student("Mohammed"),
+    Student("Hazza"),
+    Student("Mayed")
+]
+students_with_chocolates[0].chocolate = Chocolate(8, 9, 'Almond', '002')
+students_with_chocolates[1].chocolate = Chocolate(9, 10, 'Hazelnut', '004')
+students_with_chocolates[2].chocolate = Chocolate(11, 15, 'Peanut Butter', '005')
 
-# Example chocolates sorted by weight
-chocolates_by_weight = [Chocolate(50, 1.00), Chocolate(60, 1.50), Chocolate(70, 2.00), Chocolate(80, 2.50)]
-# Example chocolates sorted by price
-chocolates_by_price = [Chocolate(80, 1.00), Chocolate(60, 1.50), Chocolate(50, 2.00), Chocolate(70, 2.50)]
+# Test cases with real names
+index_by_weight = find_student_with_chocolate(students_with_chocolates, 11, by_weight=True)
+index_by_price = find_student_with_chocolate(students_with_chocolates, 9, by_weight=False)
 
-# Searching for a chocolate by weight
-weight_to_find = 70
-index_found_by_weight = find_chocolate_by_attribute(chocolates_by_weight, 'weight', weight_to_find)
-if index_found_by_weight != -1:
-    print(f"Chocolate with weight {weight_to_find} found at index {index_found_by_weight}: {chocolates_by_weight[index_found_by_weight]}")
+# Displaying results
+if index_by_weight != -1:
+    print(f"Index by Weight: {index_by_weight}, Student: {students_with_chocolates[index_by_weight]}")
 else:
-    print(f"Chocolate with weight {weight_to_find} not found.")
+    print("No student found with the specified chocolate weight.")
 
-# Searching for a chocolate by price
-price_to_find = 1.50
-index_found_by_price = find_chocolate_by_attribute(chocolates_by_price, 'price', price_to_find)
-if index_found_by_price != -1:
-    print(f"Chocolate with price {price_to_find} found at index {index_found_by_price}: {chocolates_by_price[index_found_by_price]}")
+if index_by_price != -1:
+    print(f"Index by Price: {index_by_price}, Student: {students_with_chocolates[index_by_price]}")
 else:
-    print(f"Chocolate with price {price_to_find} not found.")
+    print("No student found with the specified chocolate price.")
